@@ -1,0 +1,128 @@
+<title>Hello World App</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Hello">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+  /* Layout: one centered phone screen, greeting in the middle, action pinned low like an iOS app */
+  :root {
+    --bg: #eef1fb;
+    --surface: #ffffff;
+    --fg: #141833;
+    --muted: #5b6185;
+    --accent: #4b4fd6;
+    --on-accent: #ffffff;
+    --display: "Bricolage Grotesque", -apple-system, "Segoe UI", system-ui, sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0d0f1f; --surface: #171a33; --fg: #eceefe; --muted: #9aa0c8;
+      --accent: #8c8ff7; --on-accent: #0d0f1f; color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0d0f1f; --surface: #171a33; --fg: #eceefe; --muted: #9aa0c8;
+    --accent: #8c8ff7; --on-accent: #0d0f1f; color-scheme: dark;
+  }
+  html, body { height: 100%; }
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--display);
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    box-sizing: border-box;
+  }
+  .app {
+    height: 100%;
+    max-width: 420px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    padding-block: 32px 24px;
+    box-sizing: border-box;
+    text-align: center;
+  }
+  .stage { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; }
+  .globe { width: 88px; height: 88px; color: var(--accent); }
+  .globe.bounce { animation: bounce .45s ease; }
+  @keyframes bounce { 40% { transform: scale(1.15) rotate(-8deg); } 100% { transform: none; } }
+  h1 {
+    font-size: clamp(2rem, 9vw, 2.75rem);
+    font-weight: 700;
+    line-height: 1.1;
+    margin: 0;
+    text-wrap: balance;
+    transition: opacity .2s ease;
+  }
+  .lang {
+    font-family: var(--mono);
+    font-size: .75rem;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  button {
+    width: 100%;
+    font: 700 1.05rem var(--display);
+    color: var(--on-accent);
+    background: var(--accent);
+    border: 0;
+    border-radius: 14px;
+    padding: 16px;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: transform .1s ease;
+  }
+  button:active { transform: scale(.97); }
+  button:focus-visible { outline: 3px solid var(--fg); outline-offset: 3px; }
+  .count { font-family: var(--mono); font-size: .8rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+  @media (prefers-reduced-motion: reduce) { .globe.bounce { animation: none; } h1 { transition: none; } }
+</style>
+
+<main class="app">
+  <div class="stage">
+    <svg class="globe" id="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true">
+      <circle cx="12" cy="12" r="9.5"></circle>
+      <ellipse cx="12" cy="12" rx="4.2" ry="9.5"></ellipse>
+      <path d="M2.8 9h18.4M2.8 15h18.4"></path>
+    </svg>
+    <h1 id="greeting" aria-live="polite">Hello, World!</h1>
+    <div class="lang" id="lang">English</div>
+  </div>
+  <button id="next" type="button">Say it another way</button>
+  <div class="count" id="count">Tapped 0 times</div>
+</main>
+
+<script>
+  const greetings = [
+    ["Hello, World!", "English"],
+    ["Hola, Mundo!", "Spanish"],
+    ["Bonjour, le Monde !", "French"],
+    ["नमस्ते, दुनिया!", "Hindi"],
+    ["こんにちは、世界！", "Japanese"],
+    ["Hallo, Welt!", "German"],
+    ["Ciao, Mondo!", "Italian"],
+    ["Olá, Mundo!", "Portuguese"]
+  ];
+  let i = 0, taps = 0;
+  const $ = id => document.getElementById(id);
+  $("next").addEventListener("click", () => {
+    i = (i + 1) % greetings.length;
+    taps++;
+    const h = $("greeting");
+    h.style.opacity = 0;
+    setTimeout(() => {
+      h.textContent = greetings[i][0];
+      $("lang").textContent = greetings[i][1];
+      h.style.opacity = 1;
+    }, 150);
+    $("count").textContent = `Tapped ${taps} ${taps === 1 ? "time" : "times"}`;
+    const g = $("globe");
+    g.classList.remove("bounce"); void g.offsetWidth; g.classList.add("bounce");
+  });
+</script>
